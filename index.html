@@ -108,11 +108,6 @@
             background: #6c757d;
         }
 
-        .refine-btn {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            margin-top: 15px;
-        }
-
         .loading {
             text-align: center;
             padding: 30px;
@@ -323,20 +318,6 @@
             opacity: 0.9;
         }
 
-        .refine-section {
-            background: #f0f7ff;
-            padding: 15px;
-            border-radius: 6px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .refine-section p {
-            font-size: 0.9em;
-            color: #004085;
-            margin-bottom: 10px;
-        }
-
         @media (max-width: 768px) {
             header h1 {
                 font-size: 1.5em;
@@ -393,7 +374,7 @@
         <div class="error" id="errorMsg"></div>
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p id="loadingMsg">⏳ Loading results...</p>
+            <p id="loadingMsg">⚡ Calculating distances...</p>
         </div>
 
         <div class="content-section default-view" id="defaultView">
@@ -422,14 +403,9 @@
         <div class="content-section search-results" id="searchResults">
             <div class="results-info" id="resultsHeader"></div>
             <div class="success-box" id="successBox" style="display:none;">
-                ✅ Results calculated using straight-line distance (instant!)
+                ✅ Results calculated instantly (no API needed!)
             </div>
             <div class="stats" id="statsContainer"></div>
-
-            <div class="refine-section" id="refineSection">
-                <p>📊 These are approximate distances. Want actual driving routes?</p>
-                <button id="refineBtn" class="refine-btn">🛣️ Get Accurate Road Distance (20-30 sec)</button>
-            </div>
 
             <div class="info-box" id="topNoteBox">
                 <strong>🎯 Top 10 Nearest Offices</strong>
@@ -471,7 +447,9 @@
                 "phone": "0333 014 4292",
                 "email": "alderhey@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/alder-hey-childrens-staff-bank",
-                "city": ""
+                "city": "",
+                "lat": 53.3981,
+                "lon": -2.6169
         },
         {
                 "rank": 2,
@@ -484,7 +462,9 @@
                 "phone": "03330150348",
                 "email": "Bolton@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/bolton-nhs-foundation-trust-staff-bank",
-                "city": ""
+                "city": "",
+                "lat": 53.5734,
+                "lon": -2.4211
         },
         {
                 "rank": 3,
@@ -497,7 +477,9 @@
                 "phone": "03330 150 341",
                 "email": "eastcheshire@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/east-cheshire-bank",
-                "city": ""
+                "city": "",
+                "lat": 53.2618,
+                "lon": -2.1384
         },
         {
                 "rank": 4,
@@ -510,7 +492,9 @@
                 "phone": "0300 3033947",
                 "email": "GMMH@NHSProfessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/greater-manchester-mental-health",
-                "city": "Prestwich"
+                "city": "Prestwich",
+                "lat": 53.5447,
+                "lon": -2.2838
         },
         {
                 "rank": 5,
@@ -523,7 +507,9 @@
                 "phone": "03330 150 357",
                 "email": "LWH@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/liverpool-womens-staff-bank",
-                "city": "Crown Street"
+                "city": "Crown Street",
+                "lat": 53.4003,
+                "lon": -2.9656
         },
         {
                 "rank": 6,
@@ -536,7 +522,9 @@
                 "phone": "\u00a003330 144 288",
                 "email": "WTWA@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/manchester-university-nhs-foundation-trust-bank",
-                "city": "Car Parking and ID Office, Baguley House, Floats Road, M23 9LT"
+                "city": "Car Parking and ID Office, Baguley House, Floats Road, M23 9LT",
+                "lat": 53.3597,
+                "lon": -2.2714
         },
         {
                 "rank": 7,
@@ -549,7 +537,9 @@
                 "phone": "03330 144 288",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/manchester-university-nhs-foundation-trust-bank",
-                "city": "Oxford Road Office"
+                "city": "Oxford Road Office",
+                "lat": 53.4681,
+                "lon": -2.2239
         },
         {
                 "rank": 8,
@@ -562,7 +552,9 @@
                 "phone": "03330 144 288",
                 "email": "NMGH@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/manchester-university-nhs-foundation-trust-bank",
-                "city": "North Manchester General Hospital Office"
+                "city": "North Manchester General Hospital Office",
+                "lat": 53.5168,
+                "lon": -2.2496
         },
         {
                 "rank": 9,
@@ -575,7 +567,9 @@
                 "phone": "03330 144 294",
                 "email": "\nNCA@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/northern-care-alliance",
-                "city": "Salford Royal"
+                "city": "Salford Royal",
+                "lat": 53.5025,
+                "lon": -2.2679
         },
         {
                 "rank": 10,
@@ -588,7 +582,9 @@
                 "phone": "",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/northern-care-alliance",
-                "city": ""
+                "city": "",
+                "lat": 53.5462,
+                "lon": -2.3279
         },
         {
                 "rank": 11,
@@ -601,7 +597,9 @@
                 "phone": "\n03330 144 294",
                 "email": "NCA@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/northern-care-alliance",
-                "city": "Room 6, Top Floor, Central Administration Block, Pennine Square, Royal Oldham Hospital, Rochdale Road, Oldham, OL1 2JH"
+                "city": "Room 6, Top Floor, Central Administration Block, Pennine Square, Royal Oldham Hospital, Rochdale Road, Oldham, OL1 2JH",
+                "lat": 53.1103,
+                "lon": -2.1078
         },
         {
                 "rank": 12,
@@ -614,7 +612,9 @@
                 "phone": "03330 144 293",
                 "email": "ncm@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/north-cheshire-and-mersey-staff-bank",
-                "city": "Cheshire WA5 1QG"
+                "city": "Cheshire WA5 1QG",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 13,
@@ -627,7 +627,9 @@
                 "phone": "0333 014 4297",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/stockport-bank",
-                "city": ""
+                "city": "",
+                "lat": 53.3846,
+                "lon": -2.1109
         },
         {
                 "rank": 14,
@@ -640,7 +642,9 @@
                 "phone": "0333 014 4352",
                 "email": "tameside@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/tameside-hospital-bank",
-                "city": ""
+                "city": "",
+                "lat": 53.4825,
+                "lon": -2.1032
         },
         {
                 "rank": 15,
@@ -653,7 +657,9 @@
                 "phone": "0333 014 3691",
                 "email": "clatterbridge@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/the-clatterbridge-cancer-centre-staff-bank",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 16,
@@ -666,7 +672,9 @@
                 "phone": "0333 0144 299",
                 "email": "twc@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/the-walton-centre-staff-bank",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 17,
@@ -679,7 +687,9 @@
                 "phone": "0333 014 3738",
                 "email": "wirral@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/wirral-university-teaching-hospital-bank",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 18,
@@ -692,7 +702,9 @@
                 "phone": "0333 014 3738",
                 "email": "wirral@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/wirral-university-teaching-hospital-bank",
-                "city": ""
+                "city": "",
+                "lat": 53.3803,
+                "lon": -3.0178
         },
         {
                 "rank": 19,
@@ -705,7 +717,9 @@
                 "phone": "03330 144361",
                 "email": "BarnsleyBank@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/barnsley-hospital-staff-bank",
-                "city": "Gawber Road"
+                "city": "Gawber Road",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 20,
@@ -718,7 +732,9 @@
                 "phone": "03330 143 583",
                 "email": "DoncasterCRT@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/doncaster-and-bassetlaw-teaching-hospitals",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 21,
@@ -731,7 +747,9 @@
                 "phone": "03330 144 281",
                 "email": "HarrogateCRT@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/harrogate-and-district",
-                "city": ""
+                "city": "",
+                "lat": 54.0009,
+                "lon": -1.5366
         },
         {
                 "rank": 22,
@@ -744,7 +762,9 @@
                 "phone": "0333 014 3664",
                 "email": "NorthTeesNHSP@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/north-tees-and-hartlepool",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 23,
@@ -757,7 +777,9 @@
                 "phone": "0333 0144 283",
                 "email": "Mid.Yorks@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/mid-yorkshire-bank",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 24,
@@ -770,7 +792,9 @@
                 "phone": "0333 0144 283",
                 "email": "Mid.Yorks@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/mid-yorkshire-bank",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 25,
@@ -783,7 +807,9 @@
                 "phone": "",
                 "email": "sch@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/sheffield-childrens-hospital",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 26,
@@ -796,7 +822,9 @@
                 "phone": "0333 014 4287",
                 "email": "SheffieldCRT@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/sheffield-teaching-hospitals-bank",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 27,
@@ -809,7 +837,9 @@
                 "phone": "0333 014 4296",
                 "email": "South.Tees@NHSProfessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/south-tees",
-                "city": ""
+                "city": "",
+                "lat": 54.5822,
+                "lon": -1.1929
         },
         {
                 "rank": 28,
@@ -822,7 +852,9 @@
                 "phone": "03330 143 622",
                 "email": "STSFT@NHSProfessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/south-tyneside-and-sunderland-nhs-foundation-trust",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 29,
@@ -835,7 +867,9 @@
                 "phone": "03330 143 622",
                 "email": "STSFT@NHSProfessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/south-tyneside-and-sunderland-nhs-foundation-trust",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 30,
@@ -848,7 +882,9 @@
                 "phone": "03330 143678",
                 "email": "Rotherhambank@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/the-rotherham-staff-bank",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 31,
@@ -861,7 +897,9 @@
                 "phone": "",
                 "email": "CWPTNHSPqueries@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/midlands/coventry-and-warwickshire-bank",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 32,
@@ -874,7 +912,9 @@
                 "phone": "0333 014 3742",
                 "email": "GEHqueries@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/midlands/george-eliot-hospital",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 33,
@@ -887,7 +927,9 @@
                 "phone": "03330 143 745",
                 "email": "whac@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/midlands/worcestershire-health-and-care",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 34,
@@ -900,7 +942,9 @@
                 "phone": "03330 143 747",
                 "email": "WAH@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/midlands/worcestershire-acute-bank",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 35,
@@ -913,7 +957,9 @@
                 "phone": "0333 014 3731",
                 "email": "crh@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/chesterfield-royal-hospital",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 36,
@@ -926,7 +972,9 @@
                 "phone": "03330 144 284",
                 "email": "nuh@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/midlands/nottingham-university-hospitals",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 37,
@@ -939,7 +987,9 @@
                 "phone": "03330 144 284",
                 "email": "nuh@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/midlands/nottingham-university-hospitals",
-                "city": ""
+                "city": "",
+                "lat": 52.9714,
+                "lon": -1.1879
         },
         {
                 "rank": 38,
@@ -952,7 +1002,9 @@
                 "phone": "0333 014 3654",
                 "email": "NSFT@NHSProfessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/london-and-herts/norfolk-and-suffolk",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 39,
@@ -965,7 +1017,9 @@
                 "phone": "0333 014 4282",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/london-and-herts/east-suffolk-and-north-essex",
-                "city": "Villa 2, Colchester General Hospital, Colchester CO4 5JL"
+                "city": "Villa 2, Colchester General Hospital, Colchester CO4 5JL",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 40,
@@ -978,7 +1032,9 @@
                 "phone": "0333 014 4282",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/london-and-herts/east-suffolk-and-north-essex",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 41,
@@ -991,7 +1047,9 @@
                 "phone": "03330 143 736",
                 "email": "\nDPT@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/devon-partnership-bank",
-                "city": "Exeter,"
+                "city": "Exeter,",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 42,
@@ -1004,7 +1062,9 @@
                 "phone": "0333 014 3662",
                 "email": "TSD@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/torbay-and-south-devon",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 43,
@@ -1017,7 +1077,9 @@
                 "phone": "03330 143676",
                 "email": "HIOWH@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/hampshire-and-isle-of-wight-bank",
-                "city": "Southampton,"
+                "city": "Southampton,",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 44,
@@ -1030,7 +1092,9 @@
                 "phone": "03330 143 739",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/university-hospitals-plymouth",
-                "city": ""
+                "city": "",
+                "lat": 50.3838,
+                "lon": -4.1039
         },
         {
                 "rank": 45,
@@ -1043,7 +1107,9 @@
                 "phone": "0333 014 3694",
                 "email": "UHS@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/university-hospital-southampton-bank",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 46,
@@ -1056,7 +1122,9 @@
                 "phone": "0333 014 3655",
                 "email": "RDUHCT@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/royal-devon",
-                "city": ""
+                "city": "",
+                "lat": 51.0816,
+                "lon": -4.0633
         },
         {
                 "rank": 47,
@@ -1069,7 +1137,9 @@
                 "phone": "0333 014 3655.",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/royal-devon",
-                "city": ""
+                "city": "",
+                "lat": 50.7184,
+                "lon": -3.5339
         },
         {
                 "rank": 48,
@@ -1082,7 +1152,9 @@
                 "phone": "",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/berkshire-healthcare-staff",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 49,
@@ -1095,7 +1167,9 @@
                 "phone": "",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/berkshire-healthcare-staff",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 50,
@@ -1108,7 +1182,9 @@
                 "phone": "",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/berkshire-healthcare-staff",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 51,
@@ -1121,7 +1197,9 @@
                 "phone": "",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/berkshire-healthcare-staff",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 52,
@@ -1134,7 +1212,9 @@
                 "phone": "",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/berkshire-healthcare-staff",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 53,
@@ -1147,7 +1227,9 @@
                 "phone": "",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/berkshire-healthcare-staff",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 54,
@@ -1160,7 +1242,9 @@
                 "phone": "",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/london-and-herts/buckinghamshire-staff",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 55,
@@ -1173,7 +1257,9 @@
                 "phone": "",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/london-and-herts/buckinghamshire-staff",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 56,
@@ -1186,7 +1272,9 @@
                 "phone": "0333 014 3709",
                 "email": "East-andNorthHerts@NHSProfessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/london-and-herts/east-and-north-hertfordshire-teaching-staff-bank",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 57,
@@ -1199,7 +1287,9 @@
                 "phone": "03330 144 368",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/east-kent-hospitals-staff-bank",
-                "city": "Kent"
+                "city": "Kent",
+                "lat": 51.2803,
+                "lon": 1.0781
         },
         {
                 "rank": 58,
@@ -1212,7 +1302,9 @@
                 "phone": "03330 144 368",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/east-kent-hospitals-staff-bank",
-                "city": "TN24 0LZ"
+                "city": "TN24 0LZ",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 59,
@@ -1225,7 +1317,9 @@
                 "phone": "03330 144 368",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/east-kent-hospitals-staff-bank",
-                "city": "(Follow signs for Pharmacy)"
+                "city": "(Follow signs for Pharmacy)",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 60,
@@ -1238,7 +1332,9 @@
                 "phone": "03330 143 659",
                 "email": "nhsp-kmpt@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/kent-and-medway-mental-health-staff-bank",
-                "city": "Kent,"
+                "city": "Kent,",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 61,
@@ -1251,7 +1347,9 @@
                 "phone": "03330 143 659",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/kent-and-medway-mental-health-staff-bank",
-                "city": "Kent,"
+                "city": "Kent,",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 62,
@@ -1264,7 +1362,9 @@
                 "phone": "03330 143 659",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/kent-and-medway-mental-health-staff-bank",
-                "city": "Kent,"
+                "city": "Kent,",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 63,
@@ -1277,7 +1377,9 @@
                 "phone": "",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/oxford-health-staff-bank",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 64,
@@ -1290,7 +1392,9 @@
                 "phone": "",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/oxford-university-hospitals-staff-bank",
-                "city": "Ground Floor, West Wing, Behind Cashiers Desk, Headley Way, OX3 9DU"
+                "city": "Ground Floor, West Wing, Behind Cashiers Desk, Headley Way, OX3 9DU",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 65,
@@ -1303,7 +1407,9 @@
                 "phone": "",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/oxford-university-hospitals-staff-bank",
-                "city": "Churchill"
+                "city": "Churchill",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 66,
@@ -1316,7 +1422,9 @@
                 "phone": "",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/royal-berkshire-bank",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 67,
@@ -1329,7 +1437,9 @@
                 "phone": "0333 014 3749",
                 "email": "princessalexandra@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/london-and-herts/the-princess-alexandra-staff-bank",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 68,
@@ -1342,7 +1452,9 @@
                 "phone": "0333 014 3661",
                 "email": "westherts@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/london-and-herts/west-hertfordshire-teaching-staff-bank",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 69,
@@ -1355,7 +1467,9 @@
                 "phone": "03330 144 371 / 03332 407 552",
                 "email": "croydonNHSP@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/london-and-herts/croydon",
-                "city": ""
+                "city": "",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 70,
@@ -1368,7 +1482,9 @@
                 "phone": "0333 014 3698",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/london-and-herts/south-london-and-maudsley",
-                "city": "Monks Orchard Road"
+                "city": "Monks Orchard Road",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 71,
@@ -1381,7 +1497,9 @@
                 "phone": "03330 144 353",
                 "email": "nlmhp@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/london-and-herts/north-london-bank",
-                "city": "London,"
+                "city": "London,",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 72,
@@ -1394,7 +1512,9 @@
                 "phone": "0333 014 3749",
                 "email": "hwe@nhsprofessionals.nhs.uk",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/integrated-care-boards/hertfordshire-and-west-essex-staff-bank",
-                "city": "Harlow"
+                "city": "Harlow",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 73,
@@ -1407,7 +1527,9 @@
                 "phone": "03330 144 285.",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/livewell-southwest",
-                "city": "Plymouth,"
+                "city": "Plymouth,",
+                "lat": 52.509,
+                "lon": -1.8853
         },
         {
                 "rank": 74,
@@ -1420,15 +1542,11 @@
                 "phone": "",
                 "email": "",
                 "source": "https://www.nhsprofessionals.nhs.uk/trusts/social-enterprise-client-partners/central-surrey-health",
-                "city": "Dukes Road"
+                "city": "Dukes Road",
+                "lat": 51.3195,
+                "lon": -0.5507
         }
 ];
-
-        const geocodeCache = {};
-        const routeCache = {};
-        
-        // CORS proxy for Nominatim
-        const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
 
         const searchPostcodeInput = document.getElementById('searchPostcode');
         const searchCityInput = document.getElementById('searchCity');
@@ -1443,13 +1561,11 @@
         const resultsBodyEl = document.getElementById('resultsBody');
         const errorEl = document.getElementById('errorMsg');
         const statsContainer = document.getElementById('statsContainer');
-        const refineBtn = document.getElementById('refineBtn');
-        const refineSection = document.getElementById('refineSection');
         const successBox = document.getElementById('successBox');
         const loadingMsg = document.getElementById('loadingMsg');
 
         // Haversine formula - straight-line distance
-        function calculateStraightLineDistance(lat1, lon1, lat2, lon2) {
+        function calculateDistance(lat1, lon1, lat2, lon2) {
             const R = 6371; // Earth radius in km
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLon = (lon2 - lon1) * Math.PI / 180;
@@ -1461,7 +1577,7 @@
             return R * c;
         }
 
-        // Estimate driving time from straight-line distance
+        // Estimate driving time
         function estimateDrivingTime(straightLineKm) {
             const estimatedRoadKm = straightLineKm * 1.3;
             return (estimatedRoadKm / 80) * 60; // in minutes
@@ -1483,64 +1599,9 @@
             defaultBodyEl.innerHTML = rows;
         }
 
-        async function geocodePostcode(postcode) {
-            const cleaned = postcode.trim().toUpperCase().replace(/\s+/g, '');
-            if (geocodeCache[cleaned]) return geocodeCache[cleaned];
-            
-            try {
-                const nominatimUrl = `https://nominatim.openstreetmap.org/search?postalcode=${encodeURIComponent(postcode)}&country=uk&format=json`;
-                const corsUrl = CORS_PROXY + nominatimUrl;
-                
-                console.log('Geocoding with CORS proxy:', postcode);
-                
-                const response = await fetch(corsUrl, { 
-                    headers: { 'User-Agent': 'NHSP-Office-Finder/1.0' },
-                    signal: AbortSignal.timeout(8000) 
-                });
-                
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const results = await response.json();
-                
-                console.log('Geocode results:', results?.length, 'found');
-                
-                if (results?.length) {
-                    const coords = { lat: parseFloat(results[0].lat), lon: parseFloat(results[0].lon) };
-                    geocodeCache[cleaned] = coords;
-                    return coords;
-                }
-            } catch (e) { 
-                console.error('Geocoding error:', e.message); 
-            }
-            return null;
-        }
-
-        async function getRouteDistance(fromLat, fromLon, toLat, toLon) {
-            const cacheKey = `${fromLat},${fromLon}-${toLat},${toLon}`;
-            if (routeCache[cacheKey]) return routeCache[cacheKey];
-            
-            try {
-                const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${fromLon},${fromLat};${toLon},${toLat}?overview=false`, { 
-                    headers: { 'User-Agent': 'NHSP-Office-Finder/1.0' },
-                    signal: AbortSignal.timeout(5000) 
-                });
-                const data = await response.json();
-                if (data.routes?.[0]) {
-                    const route = data.routes[0];
-                    const result = { distance: route.distance / 1000, duration: route.duration / 60 };
-                    routeCache[cacheKey] = result;
-                    return result;
-                }
-            } catch (e) { 
-                console.error('Route error:', e.message); 
-            }
-            return null;
-        }
-
-        function formatTime(minutes) {
-            if (!minutes) return '-';
-            const hours = Math.floor(minutes / 60);
-            const mins = Math.round(minutes % 60);
-            return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+        function findOfficeByPostcode(userPostcode) {
+            const cleaned = userPostcode.trim().toUpperCase().replace(/\s+/g, '');
+            return NHSP_OFFICES.find(o => o.postcode.toUpperCase().replace(/\s+/g, '') === cleaned);
         }
 
         function showError(message) {
@@ -1573,61 +1634,64 @@
             `;
         }
 
-        async function searchByPostcode() {
+        function formatTime(minutes) {
+            if (!minutes) return '-';
+            const hours = Math.floor(minutes / 60);
+            const mins = Math.round(minutes % 60);
+            return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+        }
+
+        function searchByPostcode() {
             const userPostcode = searchPostcodeInput.value.trim();
             if (!userPostcode) { showError('Please enter a postcode (e.g., B15 2GW)'); return; }
             
             hideError();
             loadingEl.classList.add('active');
-            loadingMsg.textContent = '⚡ Calculating straight-line distances...';
+            loadingMsg.textContent = '⚡ Calculating distances instantly...';
             defaultViewEl.classList.add('hidden');
             searchResultsEl.classList.remove('active');
             successBox.style.display = 'none';
-            refineSection.style.display = 'block';
 
-            try {
-                const userCoords = await geocodePostcode(userPostcode);
-                if (!userCoords) { 
-                    showError('❌ Postcode not found. Try: B15 2GW, L12 2AP, M13 9WL'); 
-                    loadingEl.classList.remove('active'); 
-                    return; 
-                }
-
-                // Calculate straight-line distances instantly
-                const results = [];
-                for (let office of NHSP_OFFICES) {
-                    const officeCoords = await geocodePostcode(office.postcode);
-                    if (officeCoords) {
-                        const distance = calculateStraightLineDistance(
-                            userCoords.lat, userCoords.lon,
-                            officeCoords.lat, officeCoords.lon
-                        );
-                        const duration = estimateDrivingTime(distance);
-                        results.push({ ...office, distance, duration, roadDistance: null, roadDuration: null });
+            setTimeout(() => {
+                try {
+                    const userOffice = findOfficeByPostcode(userPostcode);
+                    
+                    if (!userOffice) { 
+                        showError('❌ Postcode not found. Try: B15 2GW, L12 2AP, M13 9WL'); 
+                        loadingEl.classList.remove('active'); 
+                        return; 
                     }
+
+                    // Calculate distances from user postcode to all offices
+                    const results = [];
+                    for (let office of NHSP_OFFICES) {
+                        if (office.lat && office.lon && userOffice.lat && userOffice.lon) {
+                            const distance = calculateDistance(userOffice.lat, userOffice.lon, office.lat, office.lon);
+                            const duration = estimateDrivingTime(distance);
+                            results.push({ ...office, distance, duration });
+                        }
+                    }
+
+                    results.sort((a, b) => a.distance - b.distance);
+                    const top10 = results.slice(0, 10);
+                    displayTopResults(top10, userPostcode);
+
+                    window.allResults = results;
+                    window.lastPostcode = userPostcode;
+
+                    loadingEl.classList.remove('active');
+                    defaultViewEl.classList.add('hidden');
+                    searchResultsEl.classList.add('active');
+                    successBox.style.display = 'block';
+                } catch (error) {
+                    console.error('Search error:', error);
+                    showError('❌ Error: ' + error.message);
+                    loadingEl.classList.remove('active');
                 }
-
-                results.sort((a, b) => a.distance - b.distance);
-                const top10 = results.slice(0, 10);
-                displayTopResults(top10, userPostcode, false);
-
-                window.allResults = results;
-                window.lastPostcode = userPostcode;
-
-                loadingEl.classList.remove('active');
-                defaultViewEl.classList.add('hidden');
-                searchResultsEl.classList.add('active');
-                successBox.style.display = 'block';
-
-                refineBtn.onclick = () => refineWithRoadDistance(top10, userPostcode);
-            } catch (error) {
-                console.error('Search error:', error);
-                showError('❌ Error: ' + error.message);
-                loadingEl.classList.remove('active');
-            }
+            }, 100);
         }
 
-        function displayTopResults(results, postcode, isRefined = false) {
+        function displayTopResults(results, postcode) {
             document.getElementById('resultsHeader').innerHTML = `<strong>From ${postcode.toUpperCase()}:</strong> ${results.length} offices shown`;
             const rows = results.map((office, idx) => `
                 <tr>
@@ -1635,54 +1699,13 @@
                     <td class="city">${office.city}</td>
                     <td class="trust-name">${office.trust}</td>
                     <td class="office-name">${office.office_name}</td>
-                    <td class="distance">
-                        ${office.distance.toFixed(1)} km
-                        ${isRefined && office.roadDistance ? `<br>(Road: ${office.roadDistance.toFixed(1)} km)` : ''}
-                    </td>
+                    <td class="distance">${office.distance.toFixed(1)} km</td>
                     <td>${office.phone}</td>
                     <td><a href="${office.source}" class="source-link" target="_blank">Visit →</a></td>
                 </tr>
             `).join('');
             resultsBodyEl.innerHTML = rows;
             displayStats(results);
-        }
-
-        async function refineWithRoadDistance(top10Results, postcode) {
-            loadingEl.classList.add('active');
-            loadingMsg.textContent = '🛣️ Calculating actual road distances... (20-30 sec)';
-            refineBtn.disabled = true;
-            successBox.style.display = 'none';
-
-            try {
-                const userCoords = await geocodePostcode(postcode);
-                
-                for (let i = 0; i < top10Results.length; i++) {
-                    const office = top10Results[i];
-                    const officeCoords = await geocodePostcode(office.postcode);
-                    
-                    if (officeCoords) {
-                        const route = await getRouteDistance(userCoords.lat, userCoords.lon, officeCoords.lat, officeCoords.lon);
-                        if (route) {
-                            office.roadDistance = route.distance;
-                            office.roadDuration = route.duration;
-                        }
-                    }
-                    await new Promise(resolve => setTimeout(resolve, 50));
-                }
-
-                displayTopResults(top10Results, postcode, true);
-                successBox.innerHTML = '✅ Refined with actual road distances!';
-                successBox.style.display = 'block';
-                refineSection.innerHTML = '<p>✓ Showing accurate driving routes</p>';
-                
-                loadingEl.classList.remove('active');
-                refineBtn.disabled = false;
-            } catch (error) {
-                console.error('Refine error:', error);
-                showError('❌ Could not get road distances: ' + error.message);
-                loadingEl.classList.remove('active');
-                refineBtn.disabled = false;
-            }
         }
 
         function expandToAll() {
@@ -1707,7 +1730,6 @@
             defaultViewEl.classList.add('hidden');
             searchResultsEl.classList.add('active');
             successBox.style.display = 'none';
-            refineSection.style.display = 'none';
 
             const filtered = NHSP_OFFICES.filter(office => office.city.toLowerCase().includes(citySearch));
 
@@ -1745,7 +1767,6 @@
             defaultViewEl.classList.remove('hidden');
             searchResultsEl.classList.remove('active');
             expandBtn.style.display = 'block';
-            refineBtn.disabled = false;
             successBox.style.display = 'none';
         }
 
