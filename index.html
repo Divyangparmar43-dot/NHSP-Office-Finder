@@ -1426,6 +1426,9 @@
 
         const geocodeCache = {};
         const routeCache = {};
+        
+        // CORS proxy for Nominatim
+        const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
 
         const searchPostcodeInput = document.getElementById('searchPostcode');
         const searchCityInput = document.getElementById('searchCity');
@@ -1460,7 +1463,6 @@
 
         // Estimate driving time from straight-line distance
         function estimateDrivingTime(straightLineKm) {
-            // Rough UK average: straight-line * 1.3 for actual road, ~80km/h average
             const estimatedRoadKm = straightLineKm * 1.3;
             return (estimatedRoadKm / 80) * 60; // in minutes
         }
@@ -1486,14 +1488,20 @@
             if (geocodeCache[cleaned]) return geocodeCache[cleaned];
             
             try {
-                const url = `https://nominatim.openstreetmap.org/search?postalcode=${encodeURIComponent(postcode)}&country=uk&format=json`;
-                const response = await fetch(url, { 
+                const nominatimUrl = `https://nominatim.openstreetmap.org/search?postalcode=${encodeURIComponent(postcode)}&country=uk&format=json`;
+                const corsUrl = CORS_PROXY + nominatimUrl;
+                
+                console.log('Geocoding with CORS proxy:', postcode);
+                
+                const response = await fetch(corsUrl, { 
                     headers: { 'User-Agent': 'NHSP-Office-Finder/1.0' },
                     signal: AbortSignal.timeout(8000) 
                 });
                 
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const results = await response.json();
+                
+                console.log('Geocode results:', results?.length, 'found');
                 
                 if (results?.length) {
                     const coords = { lat: parseFloat(results[0].lat), lon: parseFloat(results[0].lon) };
