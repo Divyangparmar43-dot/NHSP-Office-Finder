@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NHS Professionals Office Finder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2em;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        header p {
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
+        .search-section {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .search-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        input[type="text"] {
+            padding: 10px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .secondary-btn {
+            background: #6c757d;
+        }
+
+        .refine-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            margin-top: 15px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            display: none;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .content-section {
+            padding: 20px;
+        }
+
+        .info-box {
+            margin-bottom: 15px;
+            padding: 12px;
+            background: #e7f3ff;
+            border-left: 4px solid #667eea;
+            border-radius: 4px;
+            color: #004085;
+            font-size: 0.9em;
+        }
+
+        .success-box {
+            margin-bottom: 15px;
+            padding: 12px;
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            border-radius: 4px;
+            color: #155724;
+            font-size: 0.9em;
+        }
+
+        .results-info {
+            font-size: 0.85em;
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 0.85em;
+        }
+
+        thead {
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            padding: 10px 8px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.85em;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 8px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #555;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .rank {
+            font-weight: 600;
+            color: #667eea;
+            width: 35px;
+            text-align: center;
+        }
+
+        .distance {
+            font-weight: 600;
+            color: #28a745;
+            white-space: nowrap;
+        }
+
+        .time {
+            color: #666;
+            white-space: nowrap;
+        }
+
+        .trust-name {
+            font-weight: 500;
+            color: #333;
+            max-width: 180px;
+        }
+
+        .office-name {
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .city {
+            font-weight: 500;
+            color: #555;
+        }
+
+        .source-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .source-link:hover {
+            text-decoration: underline;
+        }
+
+        .error {
+            padding: 12px;
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            border-radius: 4px;
+            color: #721c24;
+            margin-bottom: 15px;
+            display: none;
+            font-size: 0.9em;
+        }
+
+        .error.active {
+            display: block;
+        }
+
+        .expand-btn {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .default-view {
+            display: block;
+        }
+
+        .default-view.hidden {
+            display: none;
+        }
+
+        .search-results {
+            display: none;
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        .help-text {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .stat-box .value {
+            font-size: 1.6em;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .stat-box .label {
+            font-size: 0.8em;
+            opacity: 0.9;
+        }
+
+        .refine-section {
+            background: #f0f7ff;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .refine-section p {
+            font-size: 0.9em;
+            color: #004085;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.5em;
+            }
+
+            .search-container {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.75em;
+            }
+
+            th, td {
+                padding: 6px 4px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏥 NHS Professionals Office Finder</h1>
+            <p>Find your nearest office by postcode or city</p>
+        </header>
+
+        <div class="search-section">
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    id="searchPostcode" 
+                    placeholder="Postcode (e.g., B15 2GW)"
+                >
+                <input 
+                    type="text" 
+                    id="searchCity" 
+                    placeholder="City (e.g., London)"
+                >
+                <div class="button-group">
+                    <button id="searchByPostcodeBtn">Find Postcode</button>
+                    <button id="searchByCityBtn" class="secondary-btn">Filter City</button>
+                    <button id="resetBtn" class="secondary-btn">Reset</button>
+                </div>
+            </div>
+            <div class="help-text">
+                💡 Use Ctrl+F to search all 74 offices by any text
+            </div>
+        </div>
+
+        <div class="error" id="errorMsg"></div>
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p id="loadingMsg">⏳ Loading results...</p>
+        </div>
+
+        <div class="content-section default-view" id="defaultView">
+            <div class="info-box">
+                <strong>📋 All 74 Offices</strong> - Use Ctrl+F to search by city, postcode, trust, phone, or email
+            </div>
+            <div class="table-wrapper">
+                <table id="defaultTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>City</th>
+                            <th>Trust</th>
+                            <th>Office</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Postcode</th>
+                            <th>Source Link</th>
+                        </tr>
+                    </thead>
+                    <tbody id="defaultBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-section search-results" id="searchResults">
+            <div class="results-info" id="resultsHeader"></div>
+            <div class="success-box" id="successBox" style="display:none;">
+                ✅ Results calculated using straight-line distance (instant!)
+            </div>
+            <div class="stats" id="statsContainer"></div>
+
+            <div class="refine-section" id="refineSection">
+                <p>📊 These are approximate distances. Want actual driving routes?</p>
+                <button id="refineBtn" class="refine-btn">🛣️ Get Accurate Road Distance (20-30 sec)</button>
+            </div>
+
+            <div class="info-box" id="topNoteBox">
+                <strong>🎯 Top 10 Nearest Offices</strong>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="resultsTable">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>City</th>
+                            <th>Trust</th>
+                            <th>Office</th>
+                            <th>Distance</th>
+                            <th>Phone</th>
+                            <th>Source</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsBody"></tbody>
+                </table>
+            </div>
+
+            <div class="expand-btn">
+                <button id="expandBtn">Show All 74</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const NHSP_OFFICES = [
+        {
+                "rank": 1,
+                "region": "North West",
+                "trust": "Alder Hey Children\u2019s NHS Foundation Trust",
+                "office_name": "Institute in the Park",
+                "full_address": "2nd Floor, Eaton Road, Liverpool, L12 2AP",
+                "postcode": "L12 2AP",
+                "opening_hours": "Mon\u2013Fri 09:00\u201316:00",
+                "phone": "0333 014 4292",
+                "email": "alderhey@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/alder-hey-childrens-staff-bank",
+                "city": ""
+        },
+        {
+                "rank": 2,
+                "region": "North West",
+                "trust": "Bolton NHS Foundation Trust Staff Bank",
+                "office_name": "Shawcross House",
+                "full_address": "Off Kitchener Way, Royal Bolton Hospital, Minerva Road, Bolton, BL4 0JR",
+                "postcode": "BL4 0JR",
+                "opening_hours": "Mon\u2013Fri 08:00\u201316:00",
+                "phone": "03330150348",
+                "email": "Bolton@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/bolton-nhs-foundation-trust-staff-bank",
+                "city": ""
+        },
+        {
+                "rank": 3,
+                "region": "North West",
+                "trust": "East Cheshire NHS Trust Bank",
+                "office_name": "New Alderley House",
+                "full_address": "Top Floor, New Alderley House, Macclesfield District Hospital, Victoria Road, Macclesfield, SK10 3BL",
+                "postcode": "SK10 3BL",
+                "opening_hours": "Not stated on page",
+                "phone": "03330 150 341",
+                "email": "eastcheshire@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/east-cheshire-bank",
+                "city": ""
+        },
+        {
+                "rank": 4,
+                "region": "North West",
+                "trust": "Greater Manchester Mental Health NHS Foundation Trust",
+                "office_name": "Harrop House",
+                "full_address": "Harrop House\nBury New Road\nPrestwich\nM25 3BL",
+                "postcode": "M25 3BL",
+                "opening_hours": "Monday - Friday, 08:30 - 16:00",
+                "phone": "0300 3033947",
+                "email": "GMMH@NHSProfessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/greater-manchester-mental-health",
+                "city": "Prestwich"
+        },
+        {
+                "rank": 5,
+                "region": "North West",
+                "trust": "Liverpool Women\u2019s NHS Foundation Trust",
+                "office_name": "Liverpool Women\u2019s Hospital",
+                "full_address": "Liverpool Women\u2019s Hospital\nRoom 12\nJeffcoate Ward\nCrown Street\nLiverpool L8 7SS",
+                "postcode": "L8 7SS",
+                "opening_hours": "Monday \u2013 Friday 08:30 \u2013 16:00",
+                "phone": "03330 150 357",
+                "email": "LWH@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/liverpool-womens-staff-bank",
+                "city": "Crown Street"
+        },
+        {
+                "rank": 6,
+                "region": "North West",
+                "trust": "Manchester University NHS Foundation Trust",
+                "office_name": "Wythenshawe Hospital Office",
+                "full_address": "Wythenshawe Hospital Office\n\nCar Parking and ID Office, Baguley House, Floats Road, M23 9LT\n\n(Follow sign for Entrances 17-20) through bricked walk way)",
+                "postcode": "M23 9LT",
+                "opening_hours": "Monday \u2013 Friday 08:00 \u2013 17:00",
+                "phone": "\u00a003330 144 288",
+                "email": "WTWA@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/manchester-university-nhs-foundation-trust-bank",
+                "city": "Car Parking and ID Office, Baguley House, Floats Road, M23 9LT"
+        },
+        {
+                "rank": 7,
+                "region": "North West",
+                "trust": "Manchester University NHS Foundation Trust",
+                "office_name": "Oxford Road Office",
+                "full_address": "Oxford Road Office\nRoom G13, The Old School of Physiotherapy Annex, Nelson Street, Manchester, M13 9WL",
+                "postcode": "M13 9WL",
+                "opening_hours": "Monday \u2013 Friday 08:00 \u2013 17:00",
+                "phone": "03330 144 288",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/manchester-university-nhs-foundation-trust-bank",
+                "city": "Oxford Road Office"
+        },
+        {
+                "rank": 8,
+                "region": "North West",
+                "trust": "Manchester University NHS Foundation Trust",
+                "office_name": "North Manchester General Hospital Office",
+                "full_address": "North Manchester General Hospital Office\nBlock 701, North Manchester House, Eyam ROAD, Manchester M8 5EP",
+                "postcode": "M8 5EP",
+                "opening_hours": "Monday \u2013 Friday 08:00 \u2013 17:00",
+                "phone": "03330 144 288",
+                "email": "NMGH@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/manchester-university-nhs-foundation-trust-bank",
+                "city": "North Manchester General Hospital Office"
+        },
+        {
+                "rank": 9,
+                "region": "North West",
+                "trust": "Northern Care Alliance NHS Foundation Trust",
+                "office_name": "Salford Royal",
+                "full_address": "Salford Royal\n2nd Floor, Clinical Sciences Building, Salford Royal Hospital, Stott Lane, Salford, M6 8HD\n\n\n",
+                "postcode": "M6 8HD",
+                "opening_hours": "",
+                "phone": "03330 144 294",
+                "email": "\nNCA@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/northern-care-alliance",
+                "city": "Salford Royal"
+        },
+        {
+                "rank": 10,
+                "region": "North West",
+                "trust": "Northern Care Alliance NHS Foundation Trust",
+                "office_name": "Fairfield General Hospital",
+                "full_address": "\nOpposite Ward 19, Fairfield General Hospital, Rochdale Old Road, Bury, BL9 7TD",
+                "postcode": "BL9 7TD",
+                "opening_hours": "",
+                "phone": "",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/northern-care-alliance",
+                "city": ""
+        },
+        {
+                "rank": 11,
+                "region": "North West",
+                "trust": "Northern Care Alliance NHS Foundation Trust",
+                "office_name": "Royal Oldham",
+                "full_address": "Royal Oldham\nRoom 6, Top Floor, Central Administration Block, Pennine Square, Royal Oldham Hospital, Rochdale Road, Oldham, OL1 2JH\n\n",
+                "postcode": "OL1 2JH",
+                "opening_hours": "See source page",
+                "phone": "\n03330 144 294",
+                "email": "NCA@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/northern-care-alliance",
+                "city": "Room 6, Top Floor, Central Administration Block, Pennine Square, Royal Oldham Hospital, Rochdale Road, Oldham, OL1 2JH"
+        },
+        {
+                "rank": 12,
+                "region": "North West",
+                "trust": "North Cheshire and Mersey NHS Foundation Trust",
+                "office_name": "Warrington Hospital",
+                "full_address": "NHSP office\nKendrick Wing (Ground Floor)\nWarrington Hospital\nLovely Lane\nWarrington\nCheshire WA5 1QG\n",
+                "postcode": "WA5 1QG",
+                "opening_hours": "Monday - Friday 08:00 - 16:00",
+                "phone": "03330 144 293",
+                "email": "ncm@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/north-cheshire-and-mersey-staff-bank",
+                "city": "Cheshire WA5 1QG"
+        },
+        {
+                "rank": 13,
+                "region": "North West",
+                "trust": "Stockport NHS Foundation Trust",
+                "office_name": "NHS Professionals Office",
+                "full_address": "Porta Cabin Outside A&E, Stockport, SK2 7JE",
+                "postcode": "SK2 7JE",
+                "opening_hours": "Mon\u2013Fri 08:30\u201316:30 (appointment only)",
+                "phone": "0333 014 4297",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/stockport-bank",
+                "city": ""
+        },
+        {
+                "rank": 14,
+                "region": "North West",
+                "trust": "Tameside Hospital NHS Foundation Trust",
+                "office_name": "The Lodge",
+                "full_address": "Tameside General Hospital, Ashton Under Lyne, OL6 9RW",
+                "postcode": "OL6 9RW",
+                "opening_hours": "Mon\u2013Fri 09:00\u201317:00",
+                "phone": "0333 014 4352",
+                "email": "tameside@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/tameside-hospital-bank",
+                "city": ""
+        },
+        {
+                "rank": 15,
+                "region": "North West",
+                "trust": "The Clatterbridge Cancer Centre NHS Foundation Trust",
+                "office_name": "The Spine Building",
+                "full_address": "6th Floor, 2 Paddington Village, Liverpool, L7 3FA",
+                "postcode": "L7 3FA",
+                "opening_hours": "On site once a month \u2013 contact office",
+                "phone": "0333 014 3691",
+                "email": "clatterbridge@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/the-clatterbridge-cancer-centre-staff-bank",
+                "city": ""
+        },
+        {
+                "rank": 16,
+                "region": "North West",
+                "trust": "The Walton Centre NHS Foundation Trust",
+                "office_name": "The Walton Centre",
+                "full_address": "Main Building, 2nd Floor, Lower Lane, Liverpool, L9 7LJ",
+                "postcode": "L9 7LJ",
+                "opening_hours": "Mon\u2013Wed 08:00\u201316:00",
+                "phone": "0333 0144 299",
+                "email": "twc@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/the-walton-centre-staff-bank",
+                "city": ""
+        },
+        {
+                "rank": 17,
+                "region": "North West",
+                "trust": "Wirral University Teaching Hospital NHS Foundation Trust",
+                "office_name": "Clatterbridge Office",
+                "full_address": "1st Floor, Elm House, Clatterbridge Hospital, Clatterbridge Road, Bebington, Wirral, CH63 4JY",
+                "postcode": "CH63 4JY",
+                "opening_hours": "08:00\u201316:00",
+                "phone": "0333 014 3738",
+                "email": "wirral@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/wirral-university-teaching-hospital-bank",
+                "city": ""
+        },
+        {
+                "rank": 18,
+                "region": "North West",
+                "trust": "Wirral University Teaching Hospital NHS Foundation Trust",
+                "office_name": "Arrowe Park Office",
+                "full_address": "1st Floor D Block, Arrowe Park Hospital, Wirral, CH49 5PE",
+                "postcode": "CH49 5PE",
+                "opening_hours": "08:00\u201316:00",
+                "phone": "0333 014 3738",
+                "email": "wirral@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-west/wirral-university-teaching-hospital-bank",
+                "city": ""
+        },
+        {
+                "rank": 19,
+                "region": "North East",
+                "trust": "Barnsley Hospital NHS Foundation Trust",
+                "office_name": "NHSP office",
+                "full_address": "NHSP office\nBlock 15\nBarnsley Hospital Foundation Trust\nGawber Road\nBarnsley, S75 2EP",
+                "postcode": "S75 2EP",
+                "opening_hours": "Monday \u2013 Friday 08:00 \u2013 16:00",
+                "phone": "03330 144361",
+                "email": "BarnsleyBank@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/barnsley-hospital-staff-bank",
+                "city": "Gawber Road"
+        },
+        {
+                "rank": 20,
+                "region": "North East",
+                "trust": "Doncaster & Bassetlaw Teaching Hospitals NHS Foundation Trust",
+                "office_name": "NHSP Office",
+                "full_address": "D Block Main Entrance, Doncaster Royal Infirmary, Thorne Road, Doncaster, DN2 5LT",
+                "postcode": "DN2 5LT",
+                "opening_hours": "Drop-ins Mon\u2013Fri 13:00\u201315:00",
+                "phone": "03330 143 583",
+                "email": "DoncasterCRT@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/doncaster-and-bassetlaw-teaching-hospitals",
+                "city": ""
+        },
+        {
+                "rank": 21,
+                "region": "North East",
+                "trust": "Harrogate and District NHS Foundation Trust",
+                "office_name": "Area F004",
+                "full_address": "Harrogate District Foundation Trust, Lancaster Park Road, Harrogate, HG2 7SX",
+                "postcode": "HG2 7SX",
+                "opening_hours": "Mon\u2013Fri 08:00\u201316:00",
+                "phone": "03330 144 281",
+                "email": "HarrogateCRT@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/harrogate-and-district",
+                "city": ""
+        },
+        {
+                "rank": 22,
+                "region": "North East",
+                "trust": "North Tees and Hartlepool NHS Foundation Trust",
+                "office_name": "Unit 5, Jervaulx Block",
+                "full_address": "University Hospital of North Tees, Stockton on Tees, TS19 8PE",
+                "postcode": "TS19 8PE",
+                "opening_hours": "Mon\u2013Fri 08:00\u201316:00",
+                "phone": "0333 014 3664",
+                "email": "NorthTeesNHSP@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/north-tees-and-hartlepool",
+                "city": ""
+        },
+        {
+                "rank": 23,
+                "region": "North East",
+                "trust": "Mid Yorkshire Teaching NHS Trust",
+                "office_name": "Pinderfields office",
+                "full_address": "First Floor, Trust Headquarters, Pinderfields Hospital, Aberford Road, Wakefield, WF1 4DG",
+                "postcode": "WF1 4DG",
+                "opening_hours": "Tue & Wed 09:00\u201316:00",
+                "phone": "0333 0144 283",
+                "email": "Mid.Yorks@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/mid-yorkshire-bank",
+                "city": ""
+        },
+        {
+                "rank": 24,
+                "region": "North East",
+                "trust": "Mid Yorkshire Teaching NHS Trust",
+                "office_name": "Dewsbury office",
+                "full_address": "Ground Floor, Bronte Tower, Dewsbury Hospital, Halifax Road, Dewsbury, WF13 4HS",
+                "postcode": "WF13 4HS",
+                "opening_hours": "Mon, Thu & Fri 09:00\u201316:00",
+                "phone": "0333 0144 283",
+                "email": "Mid.Yorks@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/mid-yorkshire-bank",
+                "city": ""
+        },
+        {
+                "rank": 25,
+                "region": "North East",
+                "trust": "Sheffield Children\u2019s Hospital NHS Foundation Trust",
+                "office_name": "NHSP Office",
+                "full_address": "Western Bank, Damer Street Entrance, Sheffield, S10 2TH",
+                "postcode": "S10 2TH",
+                "opening_hours": "Not stated",
+                "phone": "",
+                "email": "sch@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/sheffield-childrens-hospital",
+                "city": ""
+        },
+        {
+                "rank": 26,
+                "region": "North East",
+                "trust": "Sheffield Teaching Hospitals NHS Foundation Trust",
+                "office_name": "Clocktower Building",
+                "full_address": "Basement Floor, Northern General Hospital, S5 7AU",
+                "postcode": "S5 7AU",
+                "opening_hours": "Mon\u2013Thu 09:00\u201315:30",
+                "phone": "0333 014 4287",
+                "email": "SheffieldCRT@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/sheffield-teaching-hospitals-bank",
+                "city": ""
+        },
+        {
+                "rank": 27,
+                "region": "North East",
+                "trust": "South Tees Hospital NHS Foundation Trust",
+                "office_name": "Murray Building",
+                "full_address": "2nd Floor, James Cook University Hospital, Martin Road, Middlesbrough, TS4 3BW",
+                "postcode": "TS4 3BW",
+                "opening_hours": "Mon\u2013Fri 08:00\u201316:00",
+                "phone": "0333 014 4296",
+                "email": "South.Tees@NHSProfessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/south-tees",
+                "city": ""
+        },
+        {
+                "rank": 28,
+                "region": "North East",
+                "trust": "South Tyneside and Sunderland NHS Foundation Trust",
+                "office_name": "Sunderland \u2013 NHSP Office",
+                "full_address": "B floor, Sunderland Royal Hospital, Kayll Road, Sunderland, SR4 7TP",
+                "postcode": "SR4 7TP",
+                "opening_hours": "Mon\u2013Fri 08:00\u201316:00",
+                "phone": "03330 143 622",
+                "email": "STSFT@NHSProfessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/south-tyneside-and-sunderland-nhs-foundation-trust",
+                "city": ""
+        },
+        {
+                "rank": 29,
+                "region": "North East",
+                "trust": "South Tyneside and Sunderland NHS Foundation Trust",
+                "office_name": "South Tyneside \u2013 Ward 17",
+                "full_address": "South Tyneside District Hospital, Harton Lane, South Shields, NE34 0PL",
+                "postcode": "NE34 0PL",
+                "opening_hours": "Tue/Wed/Thu 09:00\u201316:00; Mon/Fri closed",
+                "phone": "03330 143 622",
+                "email": "STSFT@NHSProfessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/south-tyneside-and-sunderland-nhs-foundation-trust",
+                "city": ""
+        },
+        {
+                "rank": 30,
+                "region": "North East",
+                "trust": "The Rotherham NHS Foundation Trust",
+                "office_name": "D Level Junction 3",
+                "full_address": "Rotherham Hospital, Moorgate Road, Rotherham, S60 2UD",
+                "postcode": "S60 2UD",
+                "opening_hours": "Mon\u2013Fri 08:00\u201316:00",
+                "phone": "03330 143678",
+                "email": "Rotherhambank@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/the-rotherham-staff-bank",
+                "city": ""
+        },
+        {
+                "rank": 31,
+                "region": "West Midlands",
+                "trust": "Coventry and Warwickshire Partnership NHS Trust",
+                "office_name": "Wayside House",
+                "full_address": "Wilsons Lane, Longford, Coventry, CV6 6NY",
+                "postcode": "CV6 6NY",
+                "opening_hours": "Mon\u2013Fri 09:00\u201317:00",
+                "phone": "",
+                "email": "CWPTNHSPqueries@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/midlands/coventry-and-warwickshire-bank",
+                "city": ""
+        },
+        {
+                "rank": 32,
+                "region": "West Midlands",
+                "trust": "George Eliot Hospital NHS Trust",
+                "office_name": "Room 11 Lewes House",
+                "full_address": "George Eliot Hospital, Nuneaton",
+                "postcode": "CV10 7DJ",
+                "opening_hours": "Mon\u2013Fri 08:00\u201316:00",
+                "phone": "0333 014 3742",
+                "email": "GEHqueries@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/midlands/george-eliot-hospital",
+                "city": ""
+        },
+        {
+                "rank": 33,
+                "region": "West Midlands",
+                "trust": "Herefordshire and Worcestershire Health and Care NHS Trust",
+                "office_name": "2 Kings Court",
+                "full_address": "Charles Hastings Way, Worcester, WR5 1JR",
+                "postcode": "WR5 1JR",
+                "opening_hours": "Mon\u2013Fri 09:00\u201317:00",
+                "phone": "03330 143 745",
+                "email": "whac@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/midlands/worcestershire-health-and-care",
+                "city": ""
+        },
+        {
+                "rank": 34,
+                "region": "West Midlands",
+                "trust": "Worcestershire Acute Hospitals NHS Trust",
+                "office_name": "No.3 Kings Court",
+                "full_address": "1st Floor, No.3 Kings Court, Worcester Royal Hospital, Charles Hastings Way, Worcester, WR5 1DD",
+                "postcode": "WR5 1DD",
+                "opening_hours": "Mon\u2013Fri 09:00\u201317:00",
+                "phone": "03330 143 747",
+                "email": "WAH@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/midlands/worcestershire-acute-bank",
+                "city": ""
+        },
+        {
+                "rank": 35,
+                "region": "East Midlands",
+                "trust": "Chesterfield Royal Hospital NHS Foundation Trust",
+                "office_name": "Spine of Devonshire Ward",
+                "full_address": "Ground Floor, Chesterfield Royal Hospital, Calow, Chesterfield, S44 5BL",
+                "postcode": "S44 5BL",
+                "opening_hours": "Mon\u2013Fri 07:30\u201316:00",
+                "phone": "0333 014 3731",
+                "email": "crh@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/north-east/chesterfield-royal-hospital",
+                "city": ""
+        },
+        {
+                "rank": 36,
+                "region": "East Midlands",
+                "trust": "Nottingham University Hospitals NHS Trust",
+                "office_name": "Queen\u2019s Medical Centre",
+                "full_address": "B Floor, X-Ray Outpatients, Queens Medical Centre, Derby Road, Nottingham, NG7 2UH",
+                "postcode": "NG7 2UH",
+                "opening_hours": "Mon\u2013Fri 09:00\u201316:00; last appointment 15:30",
+                "phone": "03330 144 284",
+                "email": "nuh@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/midlands/nottingham-university-hospitals",
+                "city": ""
+        },
+        {
+                "rank": 37,
+                "region": "East Midlands",
+                "trust": "Nottingham University Hospitals NHS Trust",
+                "office_name": "Nottingham City Hospital",
+                "full_address": "Ground Floor, Trust Headquarters Building, Nottingham City Hospital, Hucknall Road, Nottingham, NG5 1PB",
+                "postcode": "NG5 1PB",
+                "opening_hours": "Mon\u2013Wed 09:00\u201316:00; last appointment 15:30",
+                "phone": "03330 144 284",
+                "email": "nuh@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/midlands/nottingham-university-hospitals",
+                "city": ""
+        },
+        {
+                "rank": 38,
+                "region": "East England",
+                "trust": "Norfolk and Suffolk NHS Foundation Trust",
+                "office_name": "Ipswich Office",
+                "full_address": "The Hollies, Ribbands Park, Foxhall Road, Ipswich, IP3 8XH",
+                "postcode": "IP3 8XH",
+                "opening_hours": "Mon\u2013Fri 09:00\u201317:00",
+                "phone": "0333 014 3654",
+                "email": "NSFT@NHSProfessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/london-and-herts/norfolk-and-suffolk",
+                "city": ""
+        },
+        {
+                "rank": 39,
+                "region": "East England",
+                "trust": "East Suffolk and North Essex",
+                "office_name": "Colchester",
+                "full_address": "Colchester\nVilla 2, Colchester General Hospital, Colchester CO4 5JL\n",
+                "postcode": "CO4 5JL",
+                "opening_hours": "Monday to Friday 08:00 \u2013 16:00",
+                "phone": "0333 014 4282",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/london-and-herts/east-suffolk-and-north-essex",
+                "city": "Villa 2, Colchester General Hospital, Colchester CO4 5JL"
+        },
+        {
+                "rank": 40,
+                "region": "East England",
+                "trust": "East Suffolk and North Essex",
+                "office_name": "Ipswich NHSP",
+                "full_address": "\nNorth Zone, Ipswich Hospital, Heath Road, Ipswich, IP4 5PD",
+                "postcode": "IP4 5PD",
+                "opening_hours": "Monday to Friday 08:00 \u2013 16:00",
+                "phone": "0333 014 4282",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/london-and-herts/east-suffolk-and-north-essex",
+                "city": ""
+        },
+        {
+                "rank": 41,
+                "region": "South West",
+                "trust": "Devon Partnership NHS Trust",
+                "office_name": "Wonford House",
+                "full_address": "NHSP office\nWonford House,\nTraining POD 6 - Level 2,\nArea E,\nWonford,\nExeter,\nEX2 4EX",
+                "postcode": "EX2 4EX",
+                "opening_hours": "Office opening hours:\n08.00 - 17.00",
+                "phone": "03330 143 736",
+                "email": "\nDPT@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/devon-partnership-bank",
+                "city": "Exeter,"
+        },
+        {
+                "rank": 42,
+                "region": "South West",
+                "trust": "Torbay & South Devon NHS Foundation Trust",
+                "office_name": "Regent House",
+                "full_address": "3rd Floor, Regent House, Regent Close, Torquay, TQ2 7AN",
+                "postcode": "TQ2 7AN",
+                "opening_hours": "Mon\u2013Fri 08:00\u201318:00",
+                "phone": "0333 014 3662",
+                "email": "TSD@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/torbay-and-south-devon",
+                "city": ""
+        },
+        {
+                "rank": 43,
+                "region": "South West",
+                "trust": "Hampshire & Isle of Wight Healthcare NHS Foundation Trust",
+                "office_name": "NHSP office",
+                "full_address": "NHSP office\nL1 Tom Rudd Unit,\nMoorgreen Hospital,\nBotley Road,\nWest End,\nSouthampton,\nSO30 3JB",
+                "postcode": "SO30 3JB",
+                "opening_hours": "09.00 - 17.00",
+                "phone": "03330 143676",
+                "email": "HIOWH@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/hampshire-and-isle-of-wight-bank",
+                "city": "Southampton,"
+        },
+        {
+                "rank": 44,
+                "region": "South West",
+                "trust": "University Hospitals Plymouth NHS Trust",
+                "office_name": "Derriford Centre for Health & Wellbeing",
+                "full_address": "Derriford Road, Plymouth, PL6 8DH",
+                "postcode": "PL6 8DH",
+                "opening_hours": "Mon\u2013Fri drop-ins 08:15\u201312:00; appointments 13:00\u201316:00",
+                "phone": "03330 143 739",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/university-hospitals-plymouth",
+                "city": ""
+        },
+        {
+                "rank": 45,
+                "region": "South West",
+                "trust": "University Hospital Southampton NHS Foundation Trust",
+                "office_name": "Southampton General Hospital",
+                "full_address": "Trust Management Buildings, MO1:28, Ground Floor, Tremona Road, Hampshire, SO16 6YD",
+                "postcode": "SO16 6YD",
+                "opening_hours": "Mon\u2013Fri 08:00\u201318:00",
+                "phone": "0333 014 3694",
+                "email": "UHS@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/university-hospital-southampton-bank",
+                "city": ""
+        },
+        {
+                "rank": 46,
+                "region": "South West",
+                "trust": "Royal Devon University Healthcare NHS Foundation Trust",
+                "office_name": "Northern Services Office (North Devon District Hospital - Yeo View)",
+                "full_address": "North Devon District Hospital, Suite 4 Chichester House, Raleigh Park, Barnstaple, Devon, EX31 4JB",
+                "postcode": "EX31 4JB",
+                "opening_hours": "08:30\u201316:30",
+                "phone": "0333 014 3655",
+                "email": "RDUHCT@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/royal-devon",
+                "city": ""
+        },
+        {
+                "rank": 47,
+                "region": "South West",
+                "trust": "Royal Devon University Healthcare NHS Foundation Trust",
+                "office_name": "Royal Devon and Exeter (Wonford Hospital)",
+                "full_address": "NHS Professionals Office IT training POD 6 Level 2 (Main Building) Royal Devon and Exeter Hospital Barrack RD Exeter EX2 5DW",
+                "postcode": "EX2 5DW",
+                "opening_hours": "08.00am - 17.00pm",
+                "phone": "0333 014 3655.",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/royal-devon",
+                "city": ""
+        },
+        {
+                "rank": 48,
+                "region": "South East",
+                "trust": "Berkshire Healthcare NHS Foundation Trust",
+                "office_name": "London House",
+                "full_address": "London Road, Bracknell, RG12 2UT",
+                "postcode": "RG12 2UT",
+                "opening_hours": "Not stated",
+                "phone": "",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/berkshire-healthcare-staff",
+                "city": ""
+        },
+        {
+                "rank": 49,
+                "region": "South East",
+                "trust": "Berkshire Healthcare NHS Foundation Trust",
+                "office_name": "Prospect Park Hospital \u2013 document collection",
+                "full_address": "Honey End Lane, Tilehurst, Reading, RG30 4EJ",
+                "postcode": "RG30 4EJ",
+                "opening_hours": "Monday & Wednesday (appointments required)",
+                "phone": "",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/berkshire-healthcare-staff",
+                "city": ""
+        },
+        {
+                "rank": 50,
+                "region": "South East",
+                "trust": "Berkshire Healthcare NHS Foundation Trust",
+                "office_name": "Upton Hospital \u2013 document collection",
+                "full_address": "Albert Street, Slough, SL1 2BJ",
+                "postcode": "SL1 2BJ",
+                "opening_hours": "Monday (appointments required)",
+                "phone": "",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/berkshire-healthcare-staff",
+                "city": ""
+        },
+        {
+                "rank": 51,
+                "region": "South East",
+                "trust": "Berkshire Healthcare NHS Foundation Trust",
+                "office_name": "St Marks Hospital \u2013 document collection",
+                "full_address": "112 St Marks Road, Maidenhead, SL6 6DU",
+                "postcode": "SL6 6DU",
+                "opening_hours": "Tuesday (appointments required)",
+                "phone": "",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/berkshire-healthcare-staff",
+                "city": ""
+        },
+        {
+                "rank": 52,
+                "region": "South East",
+                "trust": "Berkshire Healthcare NHS Foundation Trust",
+                "office_name": "Wokingham Community Hospital \u2013 document collection",
+                "full_address": "41 Barkham Road, Wokingham, RG41 2XR",
+                "postcode": "RG41 2XR",
+                "opening_hours": "Wednesday (appointments required)",
+                "phone": "",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/berkshire-healthcare-staff",
+                "city": ""
+        },
+        {
+                "rank": 53,
+                "region": "South East",
+                "trust": "Berkshire Healthcare NHS Foundation Trust",
+                "office_name": "West Berkshire Community Hospital \u2013 document collection",
+                "full_address": "London Road, Benham Hill, Thatcham, RG18 3AS",
+                "postcode": "RG18 3AS",
+                "opening_hours": "Thursday (appointments required)",
+                "phone": "",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/berkshire-healthcare-staff",
+                "city": ""
+        },
+        {
+                "rank": 54,
+                "region": "South East",
+                "trust": "Buckinghamshire Healthcare NHS Trust",
+                "office_name": "Stoke Mandeville Hospital",
+                "full_address": "Room 80.2.005 Hartwell Wing (1st Floor), Stoke Mandeville Hospital, Aylesbury, HP21 8AL",
+                "postcode": "HP21 8AL",
+                "opening_hours": "Mon\u2013Fri 08:00\u201317:00",
+                "phone": "",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/london-and-herts/buckinghamshire-staff",
+                "city": ""
+        },
+        {
+                "rank": 55,
+                "region": "South East",
+                "trust": "Buckinghamshire Healthcare NHS Trust",
+                "office_name": "Wycombe Hospital",
+                "full_address": "Room R6, Floor 1, Infection Control, Barracks Road, Queen Alexandra Rd, High Wycombe HP11 2TT",
+                "postcode": "HP11 2TT",
+                "opening_hours": "Mon\u2013Fri 09:00\u201317:00",
+                "phone": "",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/london-and-herts/buckinghamshire-staff",
+                "city": ""
+        },
+        {
+                "rank": 56,
+                "region": "South East",
+                "trust": "East and North Hertfordshire Teaching NHS Trust",
+                "office_name": "Lister Hospital \u2013 Level 3",
+                "full_address": "Coreys Mill Lane, Stevenage, SG1 4AB",
+                "postcode": "SG1 4AB",
+                "opening_hours": "Mon\u2013Fri 08:00\u201317:00",
+                "phone": "0333 014 3709",
+                "email": "East-andNorthHerts@NHSProfessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/london-and-herts/east-and-north-hertfordshire-teaching-staff-bank",
+                "city": ""
+        },
+        {
+                "rank": 57,
+                "region": "South East",
+                "trust": "East Kent Hospitals University NHS Foundation Trust",
+                "office_name": "Kent & Canterbury Hospital",
+                "full_address": "Kent & Canterbury Hospital\nEstates Corridor by Smartcard Office\nEthelbert Road\nCanterbury\nKent\nCT1 3NG",
+                "postcode": "CT1 3NG",
+                "opening_hours": "Monday, Wednesday and Friday - 09:00 \u2013 16:00",
+                "phone": "03330 144 368",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/east-kent-hospitals-staff-bank",
+                "city": "Kent"
+        },
+        {
+                "rank": 58,
+                "region": "South East",
+                "trust": "East Kent Hospitals University NHS Foundation Trust",
+                "office_name": "William Harvey Hospital",
+                "full_address": "William Harvey Hospital\nGround Floor by IT Training Room\nKennington Road\nWillesborough\nAshford\nKent\nTN24 0LZ\n",
+                "postcode": "TN24 0LZ",
+                "opening_hours": "Monday \u2013 Thursday 09:00 \u2013 16:00",
+                "phone": "03330 144 368",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/east-kent-hospitals-staff-bank",
+                "city": "TN24 0LZ"
+        },
+        {
+                "rank": 59,
+                "region": "South East",
+                "trust": "East Kent Hospitals University NHS Foundation Trust",
+                "office_name": "Queen Elizabeth The Queen Mother Hospital",
+                "full_address": "Queen Elizabeth The Queen Mother Hospital\nRamsgate Road\nMargate\nCT9 4AN\n(Follow signs for Pharmacy)\n",
+                "postcode": "CT9 4AN",
+                "opening_hours": "Tuesday, Thursday and Friday 09:00 \u2013 16:00",
+                "phone": "03330 144 368",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/east-kent-hospitals-staff-bank",
+                "city": "(Follow signs for Pharmacy)"
+        },
+        {
+                "rank": 60,
+                "region": "South East",
+                "trust": "Kent & Medway NHS & Social Care Partnership Trust",
+                "office_name": "Priority House",
+                "full_address": "NHSP office\nPriority House,\nHermitage Lane,\nMaidstone,\nKent,\nME16 9PH",
+                "postcode": "ME16 9PH",
+                "opening_hours": "",
+                "phone": "03330 143 659",
+                "email": "nhsp-kmpt@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/kent-and-medway-mental-health-staff-bank",
+                "city": "Kent,"
+        },
+        {
+                "rank": 61,
+                "region": "South East",
+                "trust": "Kent & Medway NHS & Social Care Partnership Trust",
+                "office_name": "Little Brook Hospital\n",
+                "full_address": "NHSP office\nLittle Brook Hospital,\nBow Arrow Lane,\nStone,\nDartford,\nKent,\nDA2 6PB",
+                "postcode": "DA2 6PB",
+                "opening_hours": "",
+                "phone": "03330 143 659",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/kent-and-medway-mental-health-staff-bank",
+                "city": "Kent,"
+        },
+        {
+                "rank": 62,
+                "region": "South East",
+                "trust": "Kent & Medway NHS & Social Care Partnership Trust",
+                "office_name": "St Martins Hospital",
+                "full_address": "St Martins Hospital\nNHSP office\nSt Martins Hospital,\nLittlebourne Road,\nCanterbury,\nKent,\nCT1 1TD",
+                "postcode": "CT1 1TD",
+                "opening_hours": "",
+                "phone": "03330 143 659",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/kent-and-medway-mental-health-staff-bank",
+                "city": "Kent,"
+        },
+        {
+                "rank": 63,
+                "region": "South East",
+                "trust": "Oxford Health NHS Foundation Trust Staff ",
+                "office_name": "The White Building",
+                "full_address": "The White Building, Littlemore Mental Health Centre, Sandford Road, Littlemore, Oxford, OX4 4XN",
+                "postcode": "OX4 4XN",
+                "opening_hours": "",
+                "phone": "",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/oxford-health-staff-bank",
+                "city": ""
+        },
+        {
+                "rank": 64,
+                "region": "South East",
+                "trust": "Oxford University Hospitals NHS Foundation Trust",
+                "office_name": "John Radcliffe",
+                "full_address": "John Radcliffe\nGround Floor, West Wing, Behind Cashiers Desk, Headley Way, OX3 9DU\n\n",
+                "postcode": "OX3 9DU",
+                "opening_hours": "Opening hours: Mon \u2013 Fri, 08:00 - 18:00",
+                "phone": "",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/oxford-university-hospitals-staff-bank",
+                "city": "Ground Floor, West Wing, Behind Cashiers Desk, Headley Way, OX3 9DU"
+        },
+        {
+                "rank": 65,
+                "region": "South East",
+                "trust": "Oxford University Hospitals NHS Foundation Trust",
+                "office_name": "Churchill",
+                "full_address": "Churchill\nNear Pharmacy & Security, Churchill Hospital, Old Road, Headington, Oxford OX3 7LE",
+                "postcode": "OX3 7LE",
+                "opening_hours": "Opening hours: Mon \u2013 Fri, 08:00 \u2013 16:00",
+                "phone": "",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/oxford-university-hospitals-staff-bank",
+                "city": "Churchill"
+        },
+        {
+                "rank": 66,
+                "region": "South East",
+                "trust": "Royal Berkshire NHS Foundation Trust",
+                "office_name": "Main Office",
+                "full_address": "Princes House Level 2, London Road, Reading, Berkshire, RG1 5AN",
+                "postcode": "RG1 5AN",
+                "opening_hours": "Mon\u2013Fri 08:00\u201317:00",
+                "phone": "",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/royal-berkshire-bank",
+                "city": ""
+        },
+        {
+                "rank": 67,
+                "region": "South East",
+                "trust": "The Princess Alexandra Hospital NHS Trust",
+                "office_name": "Kao Park (Kao 2)",
+                "full_address": "1st Floor, London Road, Harlow, Essex, CM17 9NA",
+                "postcode": "CM17 9NA",
+                "opening_hours": "Mon\u2013Fri 08:00\u201316:00",
+                "phone": "0333 014 3749",
+                "email": "princessalexandra@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/london-and-herts/the-princess-alexandra-staff-bank",
+                "city": ""
+        },
+        {
+                "rank": 68,
+                "region": "South East",
+                "trust": "West Hertfordshire Teaching Hospitals NHS Trust",
+                "office_name": "Staffing Hub",
+                "full_address": "Watford General Hospital, Vicarage Road, Watford, WD18 0HB",
+                "postcode": "WD18 0HB",
+                "opening_hours": "Mon\u2013Fri 08:00\u201317:00",
+                "phone": "0333 014 3661",
+                "email": "westherts@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/london-and-herts/west-hertfordshire-teaching-staff-bank",
+                "city": ""
+        },
+        {
+                "rank": 69,
+                "region": "London",
+                "trust": "Croydon Health Services NHS Trust",
+                "office_name": "Mayday House (HR building)",
+                "full_address": "Croydon University Hospital, London Road, CR7 7YE",
+                "postcode": "CR7 7YE",
+                "opening_hours": "Mon\u2013Fri 09:00\u201317:00",
+                "phone": "03330 144 371 / 03332 407 552",
+                "email": "croydonNHSP@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/london-and-herts/croydon",
+                "city": ""
+        },
+        {
+                "rank": 70,
+                "region": "London",
+                "trust": "South London and Maudsley",
+                "office_name": "Bethlem Royal Hospital",
+                "full_address": "Bethlem Royal Hospital\nMonks Orchard Road\nBR3 3BX",
+                "postcode": "BR3 3BX",
+                "opening_hours": "Monday to Friday 09:00 - 17:00",
+                "phone": "0333 014 3698",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/london-and-herts/south-london-and-maudsley",
+                "city": "Monks Orchard Road"
+        },
+        {
+                "rank": 71,
+                "region": "London",
+                "trust": "North London NHS Foundation Trust",
+                "office_name": "Foxglove Room,",
+                "full_address": "Foxglove Room, First Floor, Cherry Block,\nSt Ann\u2019s Hospital,\nSt Ann\u2019s Road,\nLondon,\nN15 3TH",
+                "postcode": "N15 3TH",
+                "opening_hours": "Office opening hours:\n09.00 - 17.00",
+                "phone": "03330 144 353",
+                "email": "nlmhp@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/london-and-herts/north-london-bank",
+                "city": "London,"
+        },
+        {
+                "rank": 72,
+                "region": "West Midlands",
+                "trust": "The Hertfordshire and West Essex ICB Staff Bank",
+                "office_name": "",
+                "full_address": "1st Floor\nKao Park (Kao 2)\nLondon Road\nHarlow\nEssex, CM17 9NA",
+                "postcode": "CM17 9NA",
+                "opening_hours": "Mon\u2013Fri 08:00\u201316:00",
+                "phone": "0333 014 3749",
+                "email": "hwe@nhsprofessionals.nhs.uk",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/integrated-care-boards/hertfordshire-and-west-essex-staff-bank",
+                "city": "Harlow"
+        },
+        {
+                "rank": 73,
+                "region": "South West",
+                "trust": "Livewell Southwest",
+                "office_name": "",
+                "full_address": "Mount Gould Hospital Site\nGround Floor Admin Building,\nMount Gould Road,\nPlymouth,\nPL4 7QD",
+                "postcode": "PL4 7QD",
+                "opening_hours": "",
+                "phone": "03330 144 285.",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/south/livewell-southwest",
+                "city": "Plymouth,"
+        },
+        {
+                "rank": 74,
+                "region": "South East",
+                "trust": "CSH Surrey NHS community healthcare provider",
+                "office_name": "",
+                "full_address": "4th Floor, Block A, Dukes Court\nCentral Surrey Health (CSH)\nDukes Road\nWoking GU21 5BH",
+                "postcode": "GU21 5BH",
+                "opening_hours": "Wednesday 09:00 - 16:00",
+                "phone": "",
+                "email": "",
+                "source": "https://www.nhsprofessionals.nhs.uk/trusts/social-enterprise-client-partners/central-surrey-health",
+                "city": "Dukes Road"
+        }
+];
+
+        const geocodeCache = {};
+        const routeCache = {};
+
+        const searchPostcodeInput = document.getElementById('searchPostcode');
+        const searchCityInput = document.getElementById('searchCity');
+        const searchByPostcodeBtn = document.getElementById('searchByPostcodeBtn');
+        const searchByCityBtn = document.getElementById('searchByCityBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const expandBtn = document.getElementById('expandBtn');
+        const loadingEl = document.getElementById('loading');
+        const defaultViewEl = document.getElementById('defaultView');
+        const searchResultsEl = document.getElementById('searchResults');
+        const defaultBodyEl = document.getElementById('defaultBody');
+        const resultsBodyEl = document.getElementById('resultsBody');
+        const errorEl = document.getElementById('errorMsg');
+        const statsContainer = document.getElementById('statsContainer');
+        const refineBtn = document.getElementById('refineBtn');
+        const refineSection = document.getElementById('refineSection');
+        const successBox = document.getElementById('successBox');
+        const loadingMsg = document.getElementById('loadingMsg');
+
+        // Haversine formula - straight-line distance
+        function calculateStraightLineDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Earth radius in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // Estimate driving time from straight-line distance
+        function estimateDrivingTime(straightLineKm) {
+            // Rough UK average: straight-line * 1.3 for actual road, ~80km/h average
+            const estimatedRoadKm = straightLineKm * 1.3;
+            return (estimatedRoadKm / 80) * 60; // in minutes
+        }
+
+        function initializeDefaultView() {
+            const rows = NHSP_OFFICES.map(office => `
+                <tr>
+                    <td class="rank">${office.rank}</td>
+                    <td class="city">${office.city}</td>
+                    <td class="trust-name">${office.trust}</td>
+                    <td class="office-name">${office.office_name}</td>
+                    <td>${office.phone}</td>
+                    <td>${office.email}</td>
+                    <td>${office.postcode}</td>
+                    <td><a href="${office.source}" class="source-link" target="_blank">Visit Trust →</a></td>
+                </tr>
+            `).join('');
+            defaultBodyEl.innerHTML = rows;
+        }
+
+        async function geocodePostcode(postcode) {
+            const cleaned = postcode.trim().toUpperCase().replace(/\s+/g, '');
+            if (geocodeCache[cleaned]) return geocodeCache[cleaned];
+            
+            try {
+                const url = `https://nominatim.openstreetmap.org/search?postalcode=${encodeURIComponent(postcode)}&country=uk&format=json`;
+                const response = await fetch(url, { 
+                    headers: { 'User-Agent': 'NHSP-Office-Finder/1.0' },
+                    signal: AbortSignal.timeout(8000) 
+                });
+                
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const results = await response.json();
+                
+                if (results?.length) {
+                    const coords = { lat: parseFloat(results[0].lat), lon: parseFloat(results[0].lon) };
+                    geocodeCache[cleaned] = coords;
+                    return coords;
+                }
+            } catch (e) { 
+                console.error('Geocoding error:', e.message); 
+            }
+            return null;
+        }
+
+        async function getRouteDistance(fromLat, fromLon, toLat, toLon) {
+            const cacheKey = `${fromLat},${fromLon}-${toLat},${toLon}`;
+            if (routeCache[cacheKey]) return routeCache[cacheKey];
+            
+            try {
+                const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${fromLon},${fromLat};${toLon},${toLat}?overview=false`, { 
+                    headers: { 'User-Agent': 'NHSP-Office-Finder/1.0' },
+                    signal: AbortSignal.timeout(5000) 
+                });
+                const data = await response.json();
+                if (data.routes?.[0]) {
+                    const route = data.routes[0];
+                    const result = { distance: route.distance / 1000, duration: route.duration / 60 };
+                    routeCache[cacheKey] = result;
+                    return result;
+                }
+            } catch (e) { 
+                console.error('Route error:', e.message); 
+            }
+            return null;
+        }
+
+        function formatTime(minutes) {
+            if (!minutes) return '-';
+            const hours = Math.floor(minutes / 60);
+            const mins = Math.round(minutes % 60);
+            return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+        }
+
+        function showError(message) {
+            errorEl.textContent = message;
+            errorEl.classList.add('active');
+        }
+
+        function hideError() {
+            errorEl.classList.remove('active');
+        }
+
+        function displayStats(results) {
+            const closest = results[0];
+            const farthest = results[results.length - 1];
+            const avgDistance = (results.reduce((sum, r) => sum + r.distance, 0) / results.length).toFixed(1);
+
+            statsContainer.innerHTML = `
+                <div class="stat-box">
+                    <div class="value">${closest.distance.toFixed(1)}</div>
+                    <div class="label">Nearest (km)</div>
+                </div>
+                <div class="stat-box">
+                    <div class="value">${farthest.distance.toFixed(1)}</div>
+                    <div class="label">Farthest (km)</div>
+                </div>
+                <div class="stat-box">
+                    <div class="value">${avgDistance}</div>
+                    <div class="label">Average (km)</div>
+                </div>
+            `;
+        }
+
+        async function searchByPostcode() {
+            const userPostcode = searchPostcodeInput.value.trim();
+            if (!userPostcode) { showError('Please enter a postcode (e.g., B15 2GW)'); return; }
+            
+            hideError();
+            loadingEl.classList.add('active');
+            loadingMsg.textContent = '⚡ Calculating straight-line distances...';
+            defaultViewEl.classList.add('hidden');
+            searchResultsEl.classList.remove('active');
+            successBox.style.display = 'none';
+            refineSection.style.display = 'block';
+
+            try {
+                const userCoords = await geocodePostcode(userPostcode);
+                if (!userCoords) { 
+                    showError('❌ Postcode not found. Try: B15 2GW, L12 2AP, M13 9WL'); 
+                    loadingEl.classList.remove('active'); 
+                    return; 
+                }
+
+                // Calculate straight-line distances instantly
+                const results = [];
+                for (let office of NHSP_OFFICES) {
+                    const officeCoords = await geocodePostcode(office.postcode);
+                    if (officeCoords) {
+                        const distance = calculateStraightLineDistance(
+                            userCoords.lat, userCoords.lon,
+                            officeCoords.lat, officeCoords.lon
+                        );
+                        const duration = estimateDrivingTime(distance);
+                        results.push({ ...office, distance, duration, roadDistance: null, roadDuration: null });
+                    }
+                }
+
+                results.sort((a, b) => a.distance - b.distance);
+                const top10 = results.slice(0, 10);
+                displayTopResults(top10, userPostcode, false);
+
+                window.allResults = results;
+                window.lastPostcode = userPostcode;
+
+                loadingEl.classList.remove('active');
+                defaultViewEl.classList.add('hidden');
+                searchResultsEl.classList.add('active');
+                successBox.style.display = 'block';
+
+                refineBtn.onclick = () => refineWithRoadDistance(top10, userPostcode);
+            } catch (error) {
+                console.error('Search error:', error);
+                showError('❌ Error: ' + error.message);
+                loadingEl.classList.remove('active');
+            }
+        }
+
+        function displayTopResults(results, postcode, isRefined = false) {
+            document.getElementById('resultsHeader').innerHTML = `<strong>From ${postcode.toUpperCase()}:</strong> ${results.length} offices shown`;
+            const rows = results.map((office, idx) => `
+                <tr>
+                    <td class="rank">${idx + 1}</td>
+                    <td class="city">${office.city}</td>
+                    <td class="trust-name">${office.trust}</td>
+                    <td class="office-name">${office.office_name}</td>
+                    <td class="distance">
+                        ${office.distance.toFixed(1)} km
+                        ${isRefined && office.roadDistance ? `<br>(Road: ${office.roadDistance.toFixed(1)} km)` : ''}
+                    </td>
+                    <td>${office.phone}</td>
+                    <td><a href="${office.source}" class="source-link" target="_blank">Visit →</a></td>
+                </tr>
+            `).join('');
+            resultsBodyEl.innerHTML = rows;
+            displayStats(results);
+        }
+
+        async function refineWithRoadDistance(top10Results, postcode) {
+            loadingEl.classList.add('active');
+            loadingMsg.textContent = '🛣️ Calculating actual road distances... (20-30 sec)';
+            refineBtn.disabled = true;
+            successBox.style.display = 'none';
+
+            try {
+                const userCoords = await geocodePostcode(postcode);
+                
+                for (let i = 0; i < top10Results.length; i++) {
+                    const office = top10Results[i];
+                    const officeCoords = await geocodePostcode(office.postcode);
+                    
+                    if (officeCoords) {
+                        const route = await getRouteDistance(userCoords.lat, userCoords.lon, officeCoords.lat, officeCoords.lon);
+                        if (route) {
+                            office.roadDistance = route.distance;
+                            office.roadDuration = route.duration;
+                        }
+                    }
+                    await new Promise(resolve => setTimeout(resolve, 50));
+                }
+
+                displayTopResults(top10Results, postcode, true);
+                successBox.innerHTML = '✅ Refined with actual road distances!';
+                successBox.style.display = 'block';
+                refineSection.innerHTML = '<p>✓ Showing accurate driving routes</p>';
+                
+                loadingEl.classList.remove('active');
+                refineBtn.disabled = false;
+            } catch (error) {
+                console.error('Refine error:', error);
+                showError('❌ Could not get road distances: ' + error.message);
+                loadingEl.classList.remove('active');
+                refineBtn.disabled = false;
+            }
+        }
+
+        function expandToAll() {
+            const results = window.allResults;
+            displayTopResults(results, window.lastPostcode);
+            document.getElementById('topNoteBox').innerHTML = `<strong>✅ All 74 Offices</strong> (nearest to farthest)`;
+            expandBtn.textContent = 'Show Top 10';
+            expandBtn.onclick = () => {
+                const top10 = results.slice(0, 10);
+                displayTopResults(top10, window.lastPostcode);
+                document.getElementById('topNoteBox').innerHTML = `<strong>🎯 Top 10 Nearest</strong>`;
+                expandBtn.textContent = 'Show All 74';
+                expandBtn.onclick = expandToAll;
+            };
+        }
+
+        function filterByCity() {
+            const citySearch = searchCityInput.value.trim().toLowerCase();
+            if (!citySearch) { showError('Enter a city name'); return; }
+
+            hideError();
+            defaultViewEl.classList.add('hidden');
+            searchResultsEl.classList.add('active');
+            successBox.style.display = 'none';
+            refineSection.style.display = 'none';
+
+            const filtered = NHSP_OFFICES.filter(office => office.city.toLowerCase().includes(citySearch));
+
+            if (filtered.length === 0) {
+                document.getElementById('resultsHeader').innerHTML = `No offices in: ${citySearch}`;
+                resultsBodyEl.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px;">No results</td></tr>';
+                return;
+            }
+
+            document.getElementById('resultsHeader').innerHTML = `<strong>City:</strong> ${citySearch} - ${filtered.length} office(s)`;
+
+            const rows = filtered.map((office, idx) => `
+                <tr>
+                    <td class="rank">${idx + 1}</td>
+                    <td class="city">${office.city}</td>
+                    <td class="trust-name">${office.trust}</td>
+                    <td class="office-name">${office.office_name}</td>
+                    <td>${office.phone}</td>
+                    <td>${office.email}</td>
+                    <td><a href="${office.source}" class="source-link" target="_blank">Visit →</a></td>
+                </tr>
+            `).join('');
+
+            resultsBodyEl.innerHTML = rows;
+            statsContainer.innerHTML = '';
+            document.getElementById('topNoteBox').innerHTML = `<strong>Filtered Results:</strong> ${filtered.length} in ${citySearch}`;
+            expandBtn.style.display = 'none';
+        }
+
+        function reset() {
+            searchPostcodeInput.value = '';
+            searchCityInput.value = '';
+            hideError();
+            loadingEl.classList.remove('active');
+            defaultViewEl.classList.remove('hidden');
+            searchResultsEl.classList.remove('active');
+            expandBtn.style.display = 'block';
+            refineBtn.disabled = false;
+            successBox.style.display = 'none';
+        }
+
+        searchByPostcodeBtn.addEventListener('click', searchByPostcode);
+        searchByCityBtn.addEventListener('click', filterByCity);
+        resetBtn.addEventListener('click', reset);
+        expandBtn.addEventListener('click', expandToAll);
+
+        searchPostcodeInput.addEventListener('keypress', e => { if (e.key === 'Enter') searchByPostcode(); });
+        searchCityInput.addEventListener('keypress', e => { if (e.key === 'Enter') filterByCity(); });
+
+        window.addEventListener('load', initializeDefaultView);
+    </script>
+</body>
+</html>
