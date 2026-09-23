@@ -1599,10 +1599,7 @@
             defaultBodyEl.innerHTML = rows;
         }
 
-        function findOfficeByPostcode(userPostcode) {
-            const cleaned = userPostcode.trim().toUpperCase().replace(/\s+/g, '');
-            return NHSP_OFFICES.find(o => o.postcode.toUpperCase().replace(/\s+/g, '') === cleaned);
-        }
+
 
         function showError(message) {
             errorEl.textContent = message;
@@ -1641,54 +1638,60 @@
             return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
         }
 
-        function searchByPostcode() {
+        async function searchByPostcode() {
             const userPostcode = searchPostcodeInput.value.trim();
             if (!userPostcode) { showError('Please enter a postcode (e.g., B15 2GW)'); return; }
             
             hideError();
             loadingEl.classList.add('active');
-            loadingMsg.textContent = '⚡ Calculating distances instantly...';
+            loadingMsg.textContent = '🔍 Looking up postcode coordinates...';
             defaultViewEl.classList.add('hidden');
             searchResultsEl.classList.remove('active');
             successBox.style.display = 'none';
 
-            setTimeout(() => {
-                try {
-                    const userOffice = findOfficeByPostcode(userPostcode);
-                    
-                    if (!userOffice) { 
-                        showError('❌ Postcode not found. Try: B15 2GW, L12 2AP, M13 9WL'); 
-                        loadingEl.classList.remove('active'); 
-                        return; 
-                    }
+            try {
+                // Geocode postcode using PostcodesIO API (CORS-enabled, free, no API key)
+                const response = await fetch(`https://api.postcodes.io/postcodes/${encodeURIComponent(userPostcode)}`);
+                const data = await response.json();
 
-                    // Calculate distances from user postcode to all offices
-                    const results = [];
-                    for (let office of NHSP_OFFICES) {
-                        if (office.lat && office.lon && userOffice.lat && userOffice.lon) {
-                            const distance = calculateDistance(userOffice.lat, userOffice.lon, office.lat, office.lon);
-                            const duration = estimateDrivingTime(distance);
-                            results.push({ ...office, distance, duration });
-                        }
-                    }
-
-                    results.sort((a, b) => a.distance - b.distance);
-                    const top10 = results.slice(0, 10);
-                    displayTopResults(top10, userPostcode);
-
-                    window.allResults = results;
-                    window.lastPostcode = userPostcode;
-
+                if (!data.result) {
+                    showError('❌ Invalid UK postcode. Please try again (e.g., B15 2GW, L12 2AP)');
                     loadingEl.classList.remove('active');
-                    defaultViewEl.classList.add('hidden');
-                    searchResultsEl.classList.add('active');
-                    successBox.style.display = 'block';
-                } catch (error) {
-                    console.error('Search error:', error);
-                    showError('❌ Error: ' + error.message);
-                    loadingEl.classList.remove('active');
+                    return;
                 }
-            }, 100);
+
+                loadingMsg.textContent = '⚡ Calculating distances to 74 offices...';
+
+                // Get coordinates from PostcodesIO
+                const userLat = data.result.latitude;
+                const userLon = data.result.longitude;
+
+                // Calculate distances from user postcode to all 74 offices
+                const results = [];
+                for (let office of NHSP_OFFICES) {
+                    if (office.lat && office.lon) {
+                        const distance = calculateDistance(userLat, userLon, office.lat, office.lon);
+                        const duration = estimateDrivingTime(distance);
+                        results.push({ ...office, distance, duration });
+                    }
+                }
+
+                results.sort((a, b) => a.distance - b.distance);
+                const top10 = results.slice(0, 10);
+                displayTopResults(top10, userPostcode);
+
+                window.allResults = results;
+                window.lastPostcode = userPostcode;
+
+                loadingEl.classList.remove('active');
+                defaultViewEl.classList.add('hidden');
+                searchResultsEl.classList.add('active');
+                successBox.style.display = 'block';
+            } catch (error) {
+                console.error('Search error:', error);
+                showError('❌ Error: Network issue or invalid postcode. Please try again.');
+                loadingEl.classList.remove('active');
+            }
         }
 
         function displayTopResults(results, postcode) {
